@@ -38,7 +38,9 @@ export function CalculatorProvider({ children }: { children: ReactNode }) {
   const [result, setResult] = useState<ComparisonResult | null>(null);
 
   const calculateResult = () => {
+    console.log('Calculando resultado...', { currentRates, newRates, volumes });
     const calculatedResult = calculateComparison(currentRates, newRates, volumes);
+    console.log('Resultado calculado:', calculatedResult);
     setResult(calculatedResult);
   };
 
