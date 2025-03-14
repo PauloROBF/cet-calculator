@@ -31,7 +31,7 @@ const initialVolumes: TransactionVolumes = {
   installment: 0
 };
 
-function AppContent() {
+function MainContent() {
   const { currentUser, signOut } = useAuth();
   const [currentRates, setCurrentRates] = useState<FeeRates>(initialFeeRates);
   const [newRates, setNewRates] = useState<FeeRates>(initialFeeRates);
@@ -154,15 +154,9 @@ function AppContent() {
     </button>
   );
 
-  if (showAuth) {
-    return (
-      <div className="relative">
-        {/* Conteúdo da aplicação borrado no fundo */}
-        <div className="filter blur-sm pointer-events-none">
-          <AppContent />
-        </div>
-
-        {/* Modal de autenticação */}
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-emerald-950 dark:via-green-900 dark:to-teal-950 dark:text-white">
+      {showAuth && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
           <div className="w-full max-w-md mx-4">
             {isLogin ? (
@@ -172,171 +166,145 @@ function AppContent() {
             )}
           </div>
         </div>
-      </div>
-    );
-  }
+      )}
 
-  return (
-    <ThemeProvider>
-      <AuthProvider>
-        <CalculatorProvider>
-          <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-emerald-950 dark:via-green-900 dark:to-teal-950 dark:text-white">
-            <header className="bg-white/70 backdrop-blur-lg sticky top-0 z-10 border-b border-emerald-100 dark:bg-emerald-900/70 dark:border-emerald-800">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16">
-                  <div className="flex items-center gap-8">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-gradient-to-r from-emerald-500 to-green-500 p-2 rounded-lg">
-                        <Calculator className="h-6 w-6 text-white" />
-                      </div>
-                      <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-emerald-400 to-green-400 dark:from-emerald-300 dark:to-green-300 bg-clip-text text-transparent">
-                        CET Calculator
-                      </h1>
-                    </div>
-                    
-                    <nav className="hidden md:flex items-center gap-2">
-                      <NavLink icon={Home} label="Calculadora" page="calculator" />
-                      <NavLink icon={History} label="Histórico" page="history" />
-                      <NavLink icon={SettingsIcon} label="Configurações" page="settings" />
-                    </nav>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    {currentUser ? (
-                      <button
-                        onClick={signOut}
-                        className="hidden md:flex items-center gap-2 px-4 py-2 text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
-                      >
-                        <LogOut size={20} />
-                        <span>Sair</span>
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setShowAuth(true)}
-                        className="hidden md:flex items-center gap-2 px-6 py-2 text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 border-2 border-emerald-500 dark:border-emerald-400 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-800/50 transition-all duration-300"
-                      >
-                        <span className="font-medium">Entrar</span>
-                      </button>
-                    )}
-
-                    <button
-                      onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                      className="md:hidden p-2 rounded-lg text-emerald-600 hover:bg-emerald-50 dark:text-emerald-300 dark:hover:bg-emerald-800/50"
-                    >
-                      {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                    </button>
-                  </div>
+      <header className="bg-white/70 backdrop-blur-lg sticky top-0 z-10 border-b border-emerald-100 dark:bg-emerald-900/70 dark:border-emerald-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-8">
+              <div className="flex items-center gap-3">
+                <div className="bg-gradient-to-r from-emerald-500 to-green-500 p-2 rounded-lg">
+                  <Calculator className="h-6 w-6 text-white" />
                 </div>
+                <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-emerald-400 to-green-400 dark:from-emerald-300 dark:to-green-300 bg-clip-text text-transparent">
+                  CET Calculator
+                </h1>
               </div>
+              
+              <nav className="hidden md:flex items-center gap-2">
+                <NavLink icon={Home} label="Calculadora" page="calculator" />
+                <NavLink icon={History} label="Histórico" page="history" />
+                <NavLink icon={SettingsIcon} label="Configurações" page="settings" />
+              </nav>
+            </div>
 
-              {isMobileMenuOpen && (
-                <div className="md:hidden border-t border-emerald-100 dark:border-emerald-800">
-                  <div className="px-4 py-2 space-y-1">
-                    <NavLink icon={Home} label="Calculadora" page="calculator" />
-                    <NavLink icon={History} label="Histórico" page="history" />
-                    <NavLink icon={SettingsIcon} label="Configurações" page="settings" />
-                    {currentUser ? (
-                      <button
-                        onClick={signOut}
-                        className="flex items-center gap-2 px-4 py-2 w-full text-left text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
-                      >
-                        <LogOut size={20} />
-                        <span>Sair</span>
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setShowAuth(true)}
-                        className="flex items-center gap-2 px-6 py-2 w-full text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 border-2 border-emerald-500 dark:border-emerald-400 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-800/50 transition-all duration-300"
-                      >
-                        <span className="font-medium">Entrar</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              )}
-            </header>
-
-            <main className="max-w-7xl mx-auto px-4 py-6 sm:py-12 sm:px-6 lg:px-8">
-              {activePage === 'calculator' && !showResults ? (
-                <div className="space-y-8">
-                  <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                    <FeeInput
-                      label="Taxas Atuais"
-                      rates={currentRates}
-                      onChange={setCurrentRates}
-                    />
-                    <FeeInput
-                      label="Taxas Ofertadas"
-                      rates={newRates}
-                      onChange={setNewRates}
-                    />
-                  </div>
-                  
-                  <div>
-                    <VolumeInput
-                      volumes={volumes}
-                      onChange={setVolumes}
-                    />
-                  </div>
-
-                  <div className="flex justify-center mt-8">
-                    <button
-                      onClick={handleAnalyze}
-                      className="group flex items-center gap-3 px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-xl hover:from-emerald-600 hover:to-green-600 transition-all duration-300 shadow-lg hover:shadow-xl text-base md:text-lg font-semibold w-full md:w-auto justify-center dark:from-emerald-600 dark:to-green-600 dark:hover:from-emerald-700 dark:hover:to-green-700"
-                    >
-                      <TrendingUp size={24} className="transition-transform group-hover:scale-110" />
-                      Analisar Comparativo
-                      <ArrowRight size={24} className="transition-transform group-hover:translate-x-1" />
-                    </button>
-                  </div>
-                </div>
-              ) : activePage === 'calculator' && showResults ? (
-                <div className="space-y-6 md:space-y-8">
-                  <button
-                    onClick={handleBack}
-                    className="mb-6 md:mb-8 text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-2 transition-colors dark:text-emerald-400 dark:hover:text-emerald-300"
-                  >
-                    <ArrowRight size={20} className="rotate-180" />
-                    Voltar para Edição
-                  </button>
-
-                  <div className="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
-                    <ResultSummary result={result} />
-                    <ComparisonChart result={result} />
-                  </div>
-                </div>
-              ) : activePage === 'history' ? (
-                <div className="space-y-6 md:space-y-8">
-                  {selectedComparison ? (
-                    <>
-                      <button
-                        onClick={() => setSelectedComparison(null)}
-                        className="mb-6 md:mb-8 text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-2 transition-colors dark:text-emerald-400 dark:hover:text-emerald-300"
-                      >
-                        <ArrowRight size={20} className="rotate-180" />
-                        Voltar para Lista
-                      </button>
-                      <div className="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
-                        <ResultSummary result={selectedComparison.result} />
-                        <ComparisonChart result={selectedComparison.result} />
-                      </div>
-                    </>
-                  ) : (
-                    <HistoryList history={history} onSelect={handleHistorySelect} />
-                  )}
-                </div>
+            <div className="flex items-center gap-4">
+              {currentUser ? (
+                <button
+                  onClick={signOut}
+                  className="hidden md:flex items-center gap-2 px-4 py-2 text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+                >
+                  <LogOut size={20} />
+                  <span>Sair</span>
+                </button>
               ) : (
-                <Settings
-                  onClearHistory={handleClearHistory}
-                  onExportData={handleExportData}
-                  onImportData={handleImportData}
-                />
+                <button
+                  onClick={() => setShowAuth(true)}
+                  className="hidden md:flex items-center gap-2 px-6 py-2 text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 border-2 border-emerald-500 dark:border-emerald-400 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-800/50 transition-all duration-300"
+                >
+                  <span className="font-medium">Entrar</span>
+                </button>
               )}
-            </main>
+
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden p-2 rounded-lg text-emerald-600 hover:bg-emerald-50 dark:text-emerald-300 dark:hover:bg-emerald-800/50"
+              >
+                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
           </div>
-        </CalculatorProvider>
-      </AuthProvider>
-    </ThemeProvider>
+        </div>
+
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-t border-emerald-100 dark:border-emerald-800">
+            <div className="px-4 py-2 space-y-1">
+              <NavLink icon={Home} label="Calculadora" page="calculator" />
+              <NavLink icon={History} label="Histórico" page="history" />
+              <NavLink icon={SettingsIcon} label="Configurações" page="settings" />
+              {currentUser ? (
+                <button
+                  onClick={signOut}
+                  className="flex items-center gap-2 px-4 py-2 w-full text-left text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300"
+                >
+                  <LogOut size={20} />
+                  <span>Sair</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => setShowAuth(true)}
+                  className="flex items-center gap-2 px-6 py-2 w-full text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 border-2 border-emerald-500 dark:border-emerald-400 rounded-xl hover:bg-emerald-50 dark:hover:bg-emerald-800/50 transition-all duration-300"
+                >
+                  <span className="font-medium">Entrar</span>
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {activePage === 'calculator' && !showResults ? (
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <FeeInput
+                label="Taxas Atuais"
+                rates={currentRates}
+                onChange={setCurrentRates}
+              />
+              <FeeInput
+                label="Taxas Ofertadas"
+                rates={newRates}
+                onChange={setNewRates}
+              />
+            </div>
+            
+            <div>
+              <VolumeInput
+                volumes={volumes}
+                onChange={setVolumes}
+              />
+            </div>
+
+            <div className="flex justify-center mt-8">
+              <button
+                onClick={handleAnalyze}
+                className="group flex items-center gap-3 px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-xl hover:from-emerald-600 hover:to-green-600 transition-all duration-300 shadow-lg hover:shadow-xl text-base md:text-lg font-semibold w-full md:w-auto justify-center dark:from-emerald-600 dark:to-green-600 dark:hover:from-emerald-700 dark:hover:to-green-700"
+              >
+                <TrendingUp size={24} className="transition-transform group-hover:scale-110" />
+                Analisar Comparativo
+                <ArrowRight size={24} className="transition-transform group-hover:translate-x-1" />
+              </button>
+            </div>
+          </div>
+        ) : activePage === 'calculator' && showResults ? (
+          <div className="space-y-6 md:space-y-8">
+            <button
+              onClick={handleBack}
+              className="mb-6 md:mb-8 text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-2 transition-colors dark:text-emerald-400 dark:hover:text-emerald-300"
+            >
+              <ArrowRight size={20} className="rotate-180" />
+              Voltar para Edição
+            </button>
+
+            <div className="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
+              <ResultSummary result={result} />
+              <ComparisonChart result={result} />
+            </div>
+          </div>
+        ) : activePage === 'history' ? (
+          <HistoryList
+            history={history}
+            onSelect={handleHistorySelect}
+            onClear={handleClearHistory}
+            onExport={handleExportData}
+            onImport={handleImportData}
+          />
+        ) : (
+          <Settings />
+        )}
+      </main>
+    </div>
   );
 }
 
@@ -345,7 +313,7 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <CalculatorProvider>
-          <AppContent />
+          <MainContent />
         </CalculatorProvider>
       </AuthProvider>
     </ThemeProvider>

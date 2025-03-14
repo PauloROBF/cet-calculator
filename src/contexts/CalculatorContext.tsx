@@ -15,19 +15,7 @@ interface CalculatorContextType {
 
 const CalculatorContext = createContext<CalculatorContextType | undefined>(undefined);
 
-export const useCalculator = () => {
-  const context = useContext(CalculatorContext);
-  if (!context) {
-    throw new Error('useCalculator must be used within a CalculatorProvider');
-  }
-  return context;
-};
-
-interface CalculatorProviderProps {
-  children: ReactNode;
-}
-
-export const CalculatorProvider = ({ children }: CalculatorProviderProps) => {
+export function CalculatorProvider({ children }: { children: ReactNode }) {
   const [currentRates, setCurrentRates] = useState<FeeRates>({
     debit: 0,
     credit: 0,
@@ -69,4 +57,14 @@ export const CalculatorProvider = ({ children }: CalculatorProviderProps) => {
       {children}
     </CalculatorContext.Provider>
   );
-}; 
+}
+
+export function useCalculator() {
+  const context = useContext(CalculatorContext);
+  if (context === undefined) {
+    throw new Error('useCalculator must be used within a CalculatorProvider');
+  }
+  return context;
+}
+
+export default CalculatorContext; 
