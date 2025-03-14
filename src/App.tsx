@@ -8,12 +8,11 @@ import { HistoryList } from './components/HistoryList';
 import { Settings } from './components/Settings';
 import { Login } from './components/Login';
 import { SignUp } from './components/SignUp';
-import { calculateComparison } from './utils/calculations';
 import { FeeRates, TransactionVolumes, ComparisonResult, ComparisonHistory } from './types';
 import { v4 as uuidv4 } from 'uuid';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { CalculatorProvider } from './contexts/CalculatorContext';
+import { CalculatorProvider, useCalculator } from './contexts/CalculatorContext';
 
 const initialFeeRates: FeeRates = {
   debit: 0,
@@ -33,9 +32,12 @@ const initialVolumes: TransactionVolumes = {
 
 function MainContent() {
   const { currentUser, signOut } = useAuth();
-  const [currentRates, setCurrentRates] = useState<FeeRates>(initialFeeRates);
-  const [newRates, setNewRates] = useState<FeeRates>(initialFeeRates);
-  const [volumes, setVolumes] = useState<TransactionVolumes>(initialVolumes);
+  const { 
+    currentRates, setCurrentRates,
+    newRates, setNewRates,
+    volumes, setVolumes,
+    result, calculateResult 
+  } = useCalculator();
   const [showResults, setShowResults] = useState(false);
   const [activePage, setActivePage] = useState('calculator');
   const [history, setHistory] = useState<ComparisonHistory[]>([]);
@@ -44,8 +46,6 @@ function MainContent() {
   const [isLogin, setIsLogin] = useState(true);
   const [showAuth, setShowAuth] = useState(false);
   
-  const result: ComparisonResult = calculateComparison(currentRates, newRates, volumes);
-
   useEffect(() => {
     if (currentUser) {
       const savedHistory = localStorage.getItem('comparisonHistory');
@@ -60,6 +60,8 @@ function MainContent() {
       setShowAuth(true);
       return;
     }
+
+    calculateResult();
 
     const newComparison: ComparisonHistory = {
       id: uuidv4(),
