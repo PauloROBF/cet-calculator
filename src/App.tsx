@@ -36,7 +36,8 @@ function MainContent() {
     currentRates, setCurrentRates,
     newRates, setNewRates,
     volumes, setVolumes,
-    result, calculateResult 
+    result, calculateResult,
+    isCalculating 
   } = useCalculator();
   const [showResults, setShowResults] = useState(false);
   const [activePage, setActivePage] = useState('calculator');
@@ -61,23 +62,33 @@ function MainContent() {
       return;
     }
 
+    if (isCalculating) {
+      return;
+    }
+
+    console.log('Iniciando análise...');
     calculateResult();
-
-    const newComparison: ComparisonHistory = {
-      id: uuidv4(),
-      date: new Date().toLocaleString(),
-      currentRates,
-      newRates,
-      volumes,
-      result,
-    };
-
-    const updatedHistory = [newComparison, ...history];
-    setHistory(updatedHistory);
-    localStorage.setItem('comparisonHistory', JSON.stringify(updatedHistory));
     
-    setShowResults(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Aguarda o próximo ciclo de renderização
+    setTimeout(() => {
+      if (result && !isCalculating) {
+        const newComparison: ComparisonHistory = {
+          id: uuidv4(),
+          date: new Date().toLocaleString(),
+          currentRates,
+          newRates,
+          volumes,
+          result,
+        };
+        
+        const updatedHistory = [newComparison, ...history];
+        setHistory(updatedHistory);
+        localStorage.setItem('comparisonHistory', JSON.stringify(updatedHistory));
+        setShowResults(true);
+        setActivePage('calculator');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 100);
   };
 
   const handleBack = () => {
@@ -271,10 +282,13 @@ function MainContent() {
             <div className="flex justify-center mt-8">
               <button
                 onClick={handleAnalyze}
-                className="group flex items-center gap-3 px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-xl hover:from-emerald-600 hover:to-green-600 transition-all duration-300 shadow-lg hover:shadow-xl text-base md:text-lg font-semibold w-full md:w-auto justify-center dark:from-emerald-600 dark:to-green-600 dark:hover:from-emerald-700 dark:hover:to-green-700"
+                disabled={isCalculating}
+                className={`group flex items-center gap-3 px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-emerald-500 to-green-500 text-white rounded-xl hover:from-emerald-600 hover:to-green-600 transition-all duration-300 shadow-lg hover:shadow-xl text-base md:text-lg font-semibold w-full md:w-auto justify-center dark:from-emerald-600 dark:to-green-600 dark:hover:from-emerald-700 dark:hover:to-green-700 ${
+                  isCalculating ? 'opacity-75 cursor-not-allowed' : ''
+                }`}
               >
                 <TrendingUp size={24} className="transition-transform group-hover:scale-110" />
-                Analisar Comparativo
+                {isCalculating ? 'Calculando...' : 'Analisar Comparativo'}
                 <ArrowRight size={24} className="transition-transform group-hover:translate-x-1" />
               </button>
             </div>
