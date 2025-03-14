@@ -301,7 +301,11 @@ function MainContent() {
             onImport={handleImportData}
           />
         ) : (
-          <Settings />
+          <Settings
+            onClearHistory={handleClearHistory}
+            onExportData={handleExportData}
+            onImportData={handleImportData}
+          />
         )}
       </main>
     </div>

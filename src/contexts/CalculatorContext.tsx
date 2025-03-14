@@ -2,6 +2,22 @@ import { createContext, useContext, useState, ReactNode } from 'react';
 import { FeeRates, TransactionVolumes, ComparisonResult } from '../types';
 import { calculateComparison } from '../utils/calculations';
 
+const initialFeeRates: FeeRates = {
+  debit: 0,
+  credit: 0,
+  pix: 0,
+  installments: {},
+  installment: 0
+};
+
+const initialVolumes: TransactionVolumes = {
+  debit: 0,
+  credit: 0,
+  pix: 0,
+  installments: {},
+  installment: 0
+};
+
 interface CalculatorContextType {
   currentRates: FeeRates;
   setCurrentRates: (rates: FeeRates) => void;
@@ -16,24 +32,9 @@ interface CalculatorContextType {
 const CalculatorContext = createContext<CalculatorContextType | undefined>(undefined);
 
 export function CalculatorProvider({ children }: { children: ReactNode }) {
-  const [currentRates, setCurrentRates] = useState<FeeRates>({
-    debit: 0,
-    credit: 0,
-    installment: 0
-  });
-
-  const [newRates, setNewRates] = useState<FeeRates>({
-    debit: 0,
-    credit: 0,
-    installment: 0
-  });
-
-  const [volumes, setVolumes] = useState<TransactionVolumes>({
-    debit: 0,
-    credit: 0,
-    installment: 0
-  });
-
+  const [currentRates, setCurrentRates] = useState<FeeRates>(initialFeeRates);
+  const [newRates, setNewRates] = useState<FeeRates>(initialFeeRates);
+  const [volumes, setVolumes] = useState<TransactionVolumes>(initialVolumes);
   const [result, setResult] = useState<ComparisonResult | null>(null);
 
   const calculateResult = () => {

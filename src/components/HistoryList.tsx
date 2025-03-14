@@ -7,9 +7,12 @@ import * as XLSX from 'xlsx';
 interface HistoryListProps {
   history: ComparisonHistory[];
   onSelect: (comparison: ComparisonHistory) => void;
+  onClear: () => void;
+  onExport: () => void;
+  onImport: (jsonData: string) => void;
 }
 
-export const HistoryList: FC<HistoryListProps> = ({ history, onSelect }) => {
+export const HistoryList: FC<HistoryListProps> = ({ history, onSelect, onClear, onExport, onImport }) => {
   const exportToPDF = (comparison: ComparisonHistory) => {
     const doc = new jsPDF();
     
@@ -57,41 +60,68 @@ export const HistoryList: FC<HistoryListProps> = ({ history, onSelect }) => {
   };
 
   return (
-    <div className="bg-white/70 backdrop-blur p-4 sm:p-6 md:p-8 rounded-2xl shadow-xl border border-emerald-100/50 dark:bg-emerald-900/70 dark:border-emerald-800/50">
-      <h3 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-emerald-800 dark:text-emerald-200">Histórico de Comparações</h3>
-      
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Histórico de Comparações</h2>
+        <div className="flex gap-2">
+          <button
+            onClick={onExport}
+            className="px-4 py-2 text-emerald-600 border border-emerald-600 rounded-lg hover:bg-emerald-50 dark:text-emerald-400 dark:border-emerald-400 dark:hover:bg-emerald-900/20"
+          >
+            Exportar
+          </button>
+          <label
+            className="px-4 py-2 text-emerald-600 border border-emerald-600 rounded-lg hover:bg-emerald-50 cursor-pointer dark:text-emerald-400 dark:border-emerald-400 dark:hover:bg-emerald-900/20"
+          >
+            Importar
+            <input
+              type="file"
+              className="hidden"
+              accept=".json"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = (event) => {
+                    const jsonData = event.target?.result as string;
+                    onImport(jsonData);
+                  };
+                  reader.readAsText(file);
+                }
+              }}
+            />
+          </label>
+          <button
+            onClick={onClear}
+            className="px-4 py-2 text-red-600 border border-red-600 rounded-lg hover:bg-red-50 dark:text-red-400 dark:border-red-400 dark:hover:bg-red-900/20"
+          >
+            Limpar
+          </button>
+        </div>
+      </div>
+
       {history.length === 0 ? (
-        <p className="text-gray-600 dark:text-gray-400 text-center py-8">Nenhuma comparação realizada ainda.</p>
+        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+          Nenhuma comparação realizada ainda.
+        </div>
       ) : (
         <div className="space-y-4">
           {history.map((comparison) => (
             <button
               key={comparison.id}
               onClick={() => onSelect(comparison)}
-              className="w-full p-4 bg-white/50 rounded-xl border border-emerald-100 hover:border-emerald-200 transition-colors dark:bg-emerald-800/50 dark:border-emerald-700 dark:hover:border-emerald-600"
+              className="w-full p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200 dark:bg-gray-800 dark:border-gray-700"
             >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-600 dark:text-gray-400">{comparison.date}</span>
-                <div className="flex items-center gap-1">
-                  {comparison.result.savings > 0 ? (
-                    <TrendingDown className="w-4 h-4 text-emerald-500" />
-                  ) : (
-                    <TrendingUp className="w-4 h-4 text-red-500" />
-                  )}
-                  <span className={`text-sm font-medium ${
-                    comparison.result.savings > 0 ? 'text-emerald-500' : 'text-red-500'
-                  }`}>
-                    {formatCurrency(Math.abs(comparison.result.savings))}
-                  </span>
+              <div className="flex justify-between items-center">
+                <div className="text-left">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{comparison.date}</p>
+                  <p className="mt-1 text-lg font-medium text-gray-900 dark:text-white">
+                    Economia: {comparison.result.totalSavings.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  </p>
                 </div>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-700 dark:text-gray-300">Custo Atual</span>
-                <span className="font-medium text-gray-900 dark:text-white">{formatCurrency(comparison.result.currentTotal)}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-700 dark:text-gray-300">Custo Ofertado</span>
-                <span className="font-medium text-gray-900 dark:text-white">{formatCurrency(comparison.result.newTotal)}</span>
+                <div className="text-emerald-600 dark:text-emerald-400">
+                  Ver detalhes →
+                </div>
               </div>
             </button>
           ))}
