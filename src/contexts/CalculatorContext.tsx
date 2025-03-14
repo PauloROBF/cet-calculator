@@ -26,6 +26,7 @@ interface CalculatorContextType {
   volumes: TransactionVolumes;
   setVolumes: (volumes: TransactionVolumes) => void;
   result: ComparisonResult | null;
+  isCalculating: boolean;
   calculateResult: () => void;
 }
 
@@ -36,12 +37,15 @@ export function CalculatorProvider({ children }: { children: ReactNode }) {
   const [newRates, setNewRates] = useState<FeeRates>(initialFeeRates);
   const [volumes, setVolumes] = useState<TransactionVolumes>(initialVolumes);
   const [result, setResult] = useState<ComparisonResult | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
 
   const calculateResult = () => {
+    setIsCalculating(true);
     console.log('Calculando resultado...', { currentRates, newRates, volumes });
     const calculatedResult = calculateComparison(currentRates, newRates, volumes);
     console.log('Resultado calculado:', calculatedResult);
     setResult(calculatedResult);
+    setIsCalculating(false);
   };
 
   const value = {
@@ -52,6 +56,7 @@ export function CalculatorProvider({ children }: { children: ReactNode }) {
     volumes,
     setVolumes,
     result,
+    isCalculating,
     calculateResult
   };
 
